@@ -16,6 +16,8 @@
 		{ id: 9, name: 'Item 9', color: 'gray' },
 		{ id: 10, name: 'Item 10', color: 'black' }
 	]
+	let itemname = "";
+	let showModal = false;
 
 	$: fullName = `${first_name} ${last_name}`;
 	$: {
@@ -41,13 +43,19 @@
 	}
 
 	const deleteItem = (id) => {
+		itemname = items.find(item => item.id == id).name;
 		items = items.filter(item => item.id != id);
+		toggleModal();
+	}
+
+	const toggleModal = () => {
+		showModal = !showModal;
 	}
 </script>
 
 
 <main>
-	<Modal />
+	<Modal message="{itemname} deleted!" {showModal} on:click={toggleModal}/>
 	<h1>Hello {name}!</h1>
 	
 	<div>

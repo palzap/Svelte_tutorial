@@ -1,14 +1,17 @@
 <script>
-    let showModal = true;
-    let isPromo = true;
+    export let message = "This is a modal!";
+    export let showModal = false;
+    export let isPromo = false;
 </script>
 
-<div class="backdrop" class:promo={isPromo}>
-    <div class="modal">
-        <p>This is a placeholder!</p>
+{#if showModal}
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <div class="backdrop" class:promo={isPromo} on:click|self>
+        <div class="modal">
+            <p>{message}</p>
+        </div>
     </div>
-
-</div>
+{/if}
 
 <style>
     .backdrop {

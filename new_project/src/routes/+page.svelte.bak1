@@ -21,32 +21,37 @@
 
 
 <main>
-    <Header name={formState.name}>
-        <p>Hello</p>
-        {#snippet secondChild(name)}
-            <p>Second child {name}</p>            
-        {/snippet}
-    </Header>
+    <Header name={formState.name} />
     <p>Step: {formState.step + 1}</p>
 
-    {@render formStep({ id: "name", question: "What's your name?", type: "text" })}
 
-    <!-- {@ render formStep({ id: "birthday", question: "What's your birthday?", type: "date" }) } -->
+    {#if formState.step === 0}
+        <div>
+            <label for='name'>Name</label>
+            <input type="text" id="name" bind:value={formState.name}/>
+        </div>
+        <button onclick={nextStep}>Next</button>
+    {:else if formState.step === 1}
+        <div>
+            <label for='bday'>Birthday</label>
+            <input type="date" id="bday" bind:value={formState.birthday}/>
+        </div>
+        <button onclick={nextStep}>Next</button>
+    {/if}
 
-
-{#if formState.error}
+    {#if formState.error}
     <p class="error">{formState.error}</p>
 {/if}
 </main>
 
-{#snippet formStep({ id, question, type }: { id: string; question: string; type: string })}
+<!-- {#snippet formStep({ id, question, type }; { id: string, question: string, type: string })}
     <article>
         <div>
             <label for={id}>{question}</label>
             <input {type} {id} bind:value={formState[id]}>
         </div>
     </article>    
-{/snippet}
+{/snippet} -->
 
 <style>
     .error {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from "svelte/transition";
     import Header from "./Header.svelte";
     let formState = $state<{
         answers: { [key: string]: string },
@@ -27,6 +28,9 @@
         { id: "birthday", question: "What's your birthday?", type: "date" },
         { id: "color", question: "What's your favorite color?", type: "color" }
     ];
+
+    // debug rune to inspect the formState and how often the value updates
+    $inspect(formState.step);
 </script>
 
 <Header name={formState.answers.name}/>
@@ -49,12 +53,13 @@
     <!-- This example destructures the QUESTIONS object to ensure that we are matching what is needed on the snippet -->
     {#each QUESTIONS as { id, question, type}, index (id)}
         {#if formState.step === index}
+        <div 
+            in:fly={{ x: 200, duration: 200, opacity: 0, delay: 200}}
+            out:fly={{ x: -200, duration: 200, opacity: 0}}>
             {@render formStep({ id, question, type })}
+        </div>
         {/if}
     {/each}
-
-    <!-- {@ render formStep({ id: "birthday", question: "What's your birthday?", type: "date" }) } -->
-
 
 {#if formState.error}
     <p class="error">{formState.error}</p>

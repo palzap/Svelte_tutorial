@@ -1,35 +1,57 @@
 <script lang="ts">
     import Header from "./Header.svelte";
-    let formState = $state({
-        name: "",
-        birthday: "",
+    let formState = $state<{
+        answers: { [key: string]: string },
+        step: number,
+        error: string
+    }>({
+        answers: {},
         step: 0,
         error: ""
     });
 
-    function nextStep() {
-        if ((formState.name !== "" && formState.step === 0) || (formState.birthday !== "" && formState.step === 1)) {
+    function nextStep(id: string) {
+        if (formState.answers[id]) {
             formState.step++;
             formState.error = "";
         } else {
-            if (formState.step === 0) formState.error = "Name is required";
-            if (formState.step === 1) formState.error = "Birthday is required";
+            if (id === "name") formState.error = "Name is required";
+            if (id === "birthday") formState.error = "Birthday is required";
+            if (id === "color") formState.error = "Color is required";
         }
         
     }
+
+    const QUESTIONS = [
+        { id: "name", question: "What's your name?", type: "text" },
+        { id: "birthday", question: "What's your birthday?", type: "date" },
+        { id: "color", question: "What's your favorite color?", type: "color" }
+    ];
 </script>
 
+<Header name={formState.answers.name}/>
 
 <main>
-    <Header name={formState.name}>
-        <p>Hello</p>
-        {#snippet secondChild(name)}
-            <p>Second child {name}</p>            
-        {/snippet}
-    </Header>
-    <p>Step: {formState.step + 1}</p>
+    
+    {#if formState.step === QUESTIONS.length}
+        <p>Form submitted!</p>
+        <pre>{JSON.stringify(formState.answers, null, 2)}</pre>
+    {:else}
+        <p>Step: {formState.step + 1}</p>
+    {/if}
+    
+    <!-- This example works in this case because we are matching the fields 1 to 1. -->
+    <!-- {#each QUESTIONS as question (question.id)}
+        {@render formStep(question)}
+    {/each} -->
 
-    {@render formStep({ id: "name", question: "What's your name?", type: "text" })}
+
+    <!-- This example destructures the QUESTIONS object to ensure that we are matching what is needed on the snippet -->
+    {#each QUESTIONS as { id, question, type}, index (id)}
+        {#if formState.step === index}
+            {@render formStep({ id, question, type })}
+        {/if}
+    {/each}
 
     <!-- {@ render formStep({ id: "birthday", question: "What's your birthday?", type: "date" }) } -->
 
@@ -43,8 +65,9 @@
     <article>
         <div>
             <label for={id}>{question}</label>
-            <input {type} {id} bind:value={formState[id]}>
+            <input {type} {id} bind:value={formState.answers[id]}>
         </div>
+        <button onclick={() => nextStep(id)}>Next</button>
     </article>    
 {/snippet}
 

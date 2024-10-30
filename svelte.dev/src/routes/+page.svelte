@@ -8,6 +8,13 @@
 
 	let creating = $state(false);
 	let deleting = $state([]);
+
+	let number = $state();
+
+	async function roll() {
+		const response = await fetch('/roll');
+		number = await response.json();
+	}
 </script>
 
 <div class="centered">
@@ -48,7 +55,7 @@
 					}}>
                     <input type="hidden" name="id" value={todo.id}/>
                     <span>{todo.description}</span>
-                    <button aria-label="Mark as complete"></button>
+                    <button class="button1" aria-label="Mark as complete"></button>
                 </form>				
 			</li>
 		{/each}
@@ -57,6 +64,12 @@
 
 {#if creating}
 	<span class="saving">saving...</span>
+{/if}
+
+<button onclick={roll}>Roll Dice!</button>
+
+{#if number}
+	<p>You rolled {number}!</p>
 {/if}
 
 <style>
@@ -77,7 +90,7 @@
 		flex: 1;
 	}
 
-	button {
+	.button1 {
 		border: none;
 		background: url(./remove.svg) no-repeat 50% 50%;
 		background-size: 1rem 1rem;
